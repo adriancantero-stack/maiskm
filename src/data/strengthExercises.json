@@ -1,0 +1,72 @@
+{
+  "casa": [
+    {
+      "nome": "Agachamento Livre",
+      "series": 3,
+      "reps": "15",
+      "foco": "Pernas e Glúteos"
+    },
+    {
+      "nome": "Afundo Alternado",
+      "series": 3,
+      "reps": "12 (cada perna)",
+      "foco": "Pernas e Equilíbrio"
+    },
+    {
+      "nome": "Elevação Pélvica",
+      "series": 3,
+      "reps": "15",
+      "foco": "Glúteos e Posterior"
+    },
+    {
+      "nome": "Prancha Isométrica",
+      "series": 3,
+      "reps": "45 segundos",
+      "foco": "Core e Abdômen"
+    },
+    {
+      "nome": "Panturrilha em pé",
+      "series": 4,
+      "reps": "20",
+      "foco": "Panturrilha"
+    }
+  ],
+  "academia": [
+    {
+      "nome": "Leg Press 45º",
+      "series": 3,
+      "reps": "12 a 15",
+      "foco": "Quadríceps e Glúteos"
+    },
+    {
+      "nome": "Cadeira Extensora",
+      "series": 3,
+      "reps": "12",
+      "foco": "Quadríceps"
+    },
+    {
+      "nome": "Cadeira Flexora",
+      "series": 3,
+      "reps": "12",
+      "foco": "Posterior de Coxa"
+    },
+    {
+      "nome": "Stiff",
+      "series": 3,
+      "reps": "10 a 12",
+      "foco": "Posterior e Lombar"
+    },
+    {
+      "nome": "Panturrilha no Smith",
+      "series": 4,
+      "reps": "15 a 20",
+      "foco": "Panturrilha"
+    },
+    {
+      "nome": "Abdominal Máquina / Polia",
+      "series": 3,
+      "reps": "15",
+      "foco": "Core e Abdômen"
+    }
+  ]
+}

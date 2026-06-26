@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #FF5722;
+  --color-primary-dark: #E64A19;
+  --color-primary-light: #FF8A65;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 antialiased transition-colors duration-300;
+    /* Evita seleções de texto acidentais durante o uso como PWA mobile */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+}
+
+/* Permitir seleção em campos de input/textarea */
+input, textarea {
+  -webkit-user-select: auto;
+  user-select: auto;
+}

@@ -1,0 +1,654 @@
+{
+  "5km": {
+    "iniciante": {
+      "metodologia": "Jeff Galloway (Run-Walk-Run)",
+      "duracaoSemanas": 4,
+      "semanas": [
+        {
+          "semana": 1,
+          "dias": [
+            {
+              "tipo": "forca",
+              "titulo": "Fortalecimento",
+              "descricao": "Sessão de força para proteger os joelhos.",
+              "tempo": 30,
+              "dia": 0
+            },
+            {
+              "tipo": "intervalado",
+              "titulo": "Início: Run-Walk",
+              "descricao": "Corra 1 min e Caminhe 1 min. (Método Galloway)",
+              "tempo": 20,
+              "dia": 1
+            },
+            {
+              "tipo": "intervalado",
+              "titulo": "Trote e Caminhada",
+              "descricao": "Corra 1 min e Caminhe 1 min.",
+              "tempo": 25,
+              "dia": 2
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso",
+              "descricao": "Recuperação para os músculos.",
+              "dia": 3
+            },
+            {
+              "tipo": "longo",
+              "titulo": "O Primeiro Longo",
+              "descricao": "Corra 1 min, Caminhe 1 min para construir base aeróbica.",
+              "tempo": 35,
+              "dia": 4
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Fortalecimento Core",
+              "descricao": "Trabalho de abdômen para melhorar a postura.",
+              "tempo": 20,
+              "dia": 5
+            },
+            {
+              "tipo": "corrida",
+              "titulo": "Corrida Leve",
+              "descricao": "Corra num ritmo contínuo super lento.",
+              "tempo": 15,
+              "dia": 6
+            }
+          ]
+        },
+        {
+          "semana": 2,
+          "dias": [
+            {
+              "tipo": "forca",
+              "titulo": "Fortalecimento",
+              "descricao": "Sessão de força para proteger os joelhos.",
+              "tempo": 35,
+              "dia": 0
+            },
+            {
+              "tipo": "intervalado",
+              "titulo": "Início: Run-Walk",
+              "descricao": "Corra 1 min e Caminhe 1 min. (Método Galloway)",
+              "tempo": 25,
+              "dia": 1
+            },
+            {
+              "tipo": "intervalado",
+              "titulo": "Trote e Caminhada",
+              "descricao": "Corra 1 min e Caminhe 1 min.",
+              "tempo": 30,
+              "dia": 2
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso",
+              "descricao": "Recuperação para os músculos.",
+              "dia": 3
+            },
+            {
+              "tipo": "longo",
+              "titulo": "O Primeiro Longo",
+              "descricao": "Corra 1 min, Caminhe 1 min para construir base aeróbica.",
+              "tempo": 40,
+              "dia": 4
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Fortalecimento Core",
+              "descricao": "Trabalho de abdômen para melhorar a postura.",
+              "tempo": 25,
+              "dia": 5
+            },
+            {
+              "tipo": "corrida",
+              "titulo": "Corrida Leve",
+              "descricao": "Corra num ritmo contínuo super lento.",
+              "tempo": 20,
+              "dia": 6
+            }
+          ]
+        },
+        {
+          "semana": 3,
+          "dias": [
+            {
+              "tipo": "forca",
+              "titulo": "Fortalecimento",
+              "descricao": "Sessão de força para proteger os joelhos.",
+              "tempo": 40,
+              "dia": 0
+            },
+            {
+              "tipo": "intervalado",
+              "titulo": "Início: Run-Walk",
+              "descricao": "Corra 1 min e Caminhe 1 min. (Método Galloway)",
+              "tempo": 30,
+              "dia": 1
+            },
+            {
+              "tipo": "intervalado",
+              "titulo": "Trote e Caminhada",
+              "descricao": "Corra 1 min e Caminhe 1 min.",
+              "tempo": 35,
+              "dia": 2
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso",
+              "descricao": "Recuperação para os músculos.",
+              "dia": 3
+            },
+            {
+              "tipo": "longo",
+              "titulo": "O Primeiro Longo",
+              "descricao": "Corra 1 min, Caminhe 1 min para construir base aeróbica.",
+              "tempo": 45,
+              "dia": 4
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Fortalecimento Core",
+              "descricao": "Trabalho de abdômen para melhorar a postura.",
+              "tempo": 30,
+              "dia": 5
+            },
+            {
+              "tipo": "corrida",
+              "titulo": "Corrida Leve",
+              "descricao": "Corra num ritmo contínuo super lento.",
+              "tempo": 25,
+              "dia": 6
+            }
+          ]
+        },
+        {
+          "semana": 4,
+          "dias": [
+            {
+              "tipo": "forca",
+              "titulo": "Fortalecimento",
+              "descricao": "Sessão de força para proteger os joelhos.",
+              "tempo": 45,
+              "dia": 0
+            },
+            {
+              "tipo": "intervalado",
+              "titulo": "Início: Run-Walk",
+              "descricao": "Corra 1 min e Caminhe 1 min. (Método Galloway)",
+              "tempo": 35,
+              "dia": 1
+            },
+            {
+              "tipo": "intervalado",
+              "titulo": "Trote e Caminhada",
+              "descricao": "Corra 1 min e Caminhe 1 min.",
+              "tempo": 40,
+              "dia": 2
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso",
+              "descricao": "Recuperação para os músculos.",
+              "dia": 3
+            },
+            {
+              "tipo": "longo",
+              "titulo": "O Primeiro Longo",
+              "descricao": "Corra 1 min, Caminhe 1 min para construir base aeróbica.",
+              "tempo": 50,
+              "dia": 4
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Fortalecimento Core",
+              "descricao": "Trabalho de abdômen para melhorar a postura.",
+              "tempo": 35,
+              "dia": 5
+            },
+            {
+              "dia": 6,
+              "tipo": "corrida",
+              "titulo": "🔥 PROVA FINAL DE NÍVEL 🔥",
+              "descricao": "Corra os 5km no seu melhor tempo para tentar avançar de nível!",
+              "tempo": 0
+            }
+          ]
+        }
+      ]
+    },
+    "intermediario": {
+      "metodologia": "Hal Higdon",
+      "duracaoSemanas": 4,
+      "semanas": [
+        {
+          "semana": 1,
+          "dias": [
+            {
+              "tipo": "corrida",
+              "titulo": "Corrida Base",
+              "descricao": "Mantenha ritmo constante e confortável.",
+              "tempo": 30,
+              "dia": 0
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso",
+              "descricao": "Recuperação passiva.",
+              "dia": 1
+            },
+            {
+              "tipo": "corrida",
+              "titulo": "Corrida Base",
+              "descricao": "Mais um dia de base para construir volume.",
+              "tempo": 30,
+              "dia": 2
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Fortalecimento Base",
+              "descricao": "Foco em membros inferiores.",
+              "tempo": 40,
+              "dia": 3
+            },
+            {
+              "tipo": "longo",
+              "titulo": "O Longão",
+              "descricao": "Corra num ritmo 30s/km mais lento que seu alvo.",
+              "tempo": 50,
+              "dia": 4
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso Total",
+              "descricao": "Descanso.",
+              "dia": 5
+            },
+            {
+              "tipo": "corrida",
+              "titulo": "Recovery Run",
+              "descricao": "Corrida regenerativa.",
+              "tempo": 20,
+              "dia": 6
+            }
+          ]
+        },
+        {
+          "semana": 2,
+          "dias": [
+            {
+              "tipo": "corrida",
+              "titulo": "Corrida Base",
+              "descricao": "Mantenha ritmo constante e confortável.",
+              "tempo": 35,
+              "dia": 0
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso",
+              "descricao": "Recuperação passiva.",
+              "dia": 1
+            },
+            {
+              "tipo": "corrida",
+              "titulo": "Corrida Base",
+              "descricao": "Mais um dia de base para construir volume.",
+              "tempo": 35,
+              "dia": 2
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Fortalecimento Base",
+              "descricao": "Foco em membros inferiores.",
+              "tempo": 45,
+              "dia": 3
+            },
+            {
+              "tipo": "longo",
+              "titulo": "O Longão",
+              "descricao": "Corra num ritmo 30s/km mais lento que seu alvo.",
+              "tempo": 55,
+              "dia": 4
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso Total",
+              "descricao": "Descanso.",
+              "dia": 5
+            },
+            {
+              "tipo": "corrida",
+              "titulo": "Recovery Run",
+              "descricao": "Corrida regenerativa.",
+              "tempo": 25,
+              "dia": 6
+            }
+          ]
+        },
+        {
+          "semana": 3,
+          "dias": [
+            {
+              "tipo": "corrida",
+              "titulo": "Corrida Base",
+              "descricao": "Mantenha ritmo constante e confortável.",
+              "tempo": 40,
+              "dia": 0
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso",
+              "descricao": "Recuperação passiva.",
+              "dia": 1
+            },
+            {
+              "tipo": "corrida",
+              "titulo": "Corrida Base",
+              "descricao": "Mais um dia de base para construir volume.",
+              "tempo": 40,
+              "dia": 2
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Fortalecimento Base",
+              "descricao": "Foco em membros inferiores.",
+              "tempo": 50,
+              "dia": 3
+            },
+            {
+              "tipo": "longo",
+              "titulo": "O Longão",
+              "descricao": "Corra num ritmo 30s/km mais lento que seu alvo.",
+              "tempo": 60,
+              "dia": 4
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso Total",
+              "descricao": "Descanso.",
+              "dia": 5
+            },
+            {
+              "tipo": "corrida",
+              "titulo": "Recovery Run",
+              "descricao": "Corrida regenerativa.",
+              "tempo": 30,
+              "dia": 6
+            }
+          ]
+        },
+        {
+          "semana": 4,
+          "dias": [
+            {
+              "tipo": "corrida",
+              "titulo": "Corrida Base",
+              "descricao": "Mantenha ritmo constante e confortável.",
+              "tempo": 45,
+              "dia": 0
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso",
+              "descricao": "Recuperação passiva.",
+              "dia": 1
+            },
+            {
+              "tipo": "corrida",
+              "titulo": "Corrida Base",
+              "descricao": "Mais um dia de base para construir volume.",
+              "tempo": 45,
+              "dia": 2
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Fortalecimento Base",
+              "descricao": "Foco em membros inferiores.",
+              "tempo": 55,
+              "dia": 3
+            },
+            {
+              "tipo": "longo",
+              "titulo": "O Longão",
+              "descricao": "Corra num ritmo 30s/km mais lento que seu alvo.",
+              "tempo": 65,
+              "dia": 4
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso Total",
+              "descricao": "Descanso.",
+              "dia": 5
+            },
+            {
+              "dia": 6,
+              "tipo": "corrida",
+              "titulo": "🔥 PROVA FINAL DE NÍVEL 🔥",
+              "descricao": "Corra os 5km no seu melhor tempo para tentar avançar de nível!",
+              "tempo": 0
+            }
+          ]
+        }
+      ]
+    },
+    "avancado": {
+      "metodologia": "Jack Daniels (VDOT)",
+      "duracaoSemanas": 4,
+      "semanas": [
+        {
+          "semana": 1,
+          "dias": [
+            {
+              "tipo": "intervalado",
+              "titulo": "Treino de Limiar",
+              "descricao": "Aqueça 10min. Corra no ritmo de limiar. Desaqueça.",
+              "tempo": 40,
+              "dia": 0
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Força Elite",
+              "descricao": "Fortalecimento pesado para potência e prevenção.",
+              "tempo": 45,
+              "dia": 1
+            },
+            {
+              "tipo": "corrida",
+              "titulo": "Corrida Leve",
+              "descricao": "Corrida fácil para volume.",
+              "tempo": 45,
+              "dia": 2
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso",
+              "descricao": "Preparação para o próximo treino forte.",
+              "dia": 3
+            },
+            {
+              "tipo": "intervalado",
+              "titulo": "Intervalos VO2máx",
+              "descricao": "Ritmo forte com trote de recuperação.",
+              "tempo": 50,
+              "dia": 4
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Força de Sustentação",
+              "descricao": "Treino focado em suportar fadiga muscular.",
+              "tempo": 30,
+              "dia": 5
+            },
+            {
+              "tipo": "longo",
+              "titulo": "Longo com Fim Rápido",
+              "descricao": "Corra fácil, termine acelerando.",
+              "tempo": 60,
+              "dia": 6
+            }
+          ]
+        },
+        {
+          "semana": 2,
+          "dias": [
+            {
+              "tipo": "intervalado",
+              "titulo": "Treino de Limiar",
+              "descricao": "Aqueça 10min. Corra no ritmo de limiar. Desaqueça.",
+              "tempo": 45,
+              "dia": 0
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Força Elite",
+              "descricao": "Fortalecimento pesado para potência e prevenção.",
+              "tempo": 50,
+              "dia": 1
+            },
+            {
+              "tipo": "corrida",
+              "titulo": "Corrida Leve",
+              "descricao": "Corrida fácil para volume.",
+              "tempo": 50,
+              "dia": 2
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso",
+              "descricao": "Preparação para o próximo treino forte.",
+              "dia": 3
+            },
+            {
+              "tipo": "intervalado",
+              "titulo": "Intervalos VO2máx",
+              "descricao": "Ritmo forte com trote de recuperação.",
+              "tempo": 55,
+              "dia": 4
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Força de Sustentação",
+              "descricao": "Treino focado em suportar fadiga muscular.",
+              "tempo": 35,
+              "dia": 5
+            },
+            {
+              "tipo": "longo",
+              "titulo": "Longo com Fim Rápido",
+              "descricao": "Corra fácil, termine acelerando.",
+              "tempo": 65,
+              "dia": 6
+            }
+          ]
+        },
+        {
+          "semana": 3,
+          "dias": [
+            {
+              "tipo": "intervalado",
+              "titulo": "Treino de Limiar",
+              "descricao": "Aqueça 10min. Corra no ritmo de limiar. Desaqueça.",
+              "tempo": 50,
+              "dia": 0
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Força Elite",
+              "descricao": "Fortalecimento pesado para potência e prevenção.",
+              "tempo": 55,
+              "dia": 1
+            },
+            {
+              "tipo": "corrida",
+              "titulo": "Corrida Leve",
+              "descricao": "Corrida fácil para volume.",
+              "tempo": 55,
+              "dia": 2
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso",
+              "descricao": "Preparação para o próximo treino forte.",
+              "dia": 3
+            },
+            {
+              "tipo": "intervalado",
+              "titulo": "Intervalos VO2máx",
+              "descricao": "Ritmo forte com trote de recuperação.",
+              "tempo": 60,
+              "dia": 4
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Força de Sustentação",
+              "descricao": "Treino focado em suportar fadiga muscular.",
+              "tempo": 40,
+              "dia": 5
+            },
+            {
+              "tipo": "longo",
+              "titulo": "Longo com Fim Rápido",
+              "descricao": "Corra fácil, termine acelerando.",
+              "tempo": 70,
+              "dia": 6
+            }
+          ]
+        },
+        {
+          "semana": 4,
+          "dias": [
+            {
+              "tipo": "intervalado",
+              "titulo": "Treino de Limiar",
+              "descricao": "Aqueça 10min. Corra no ritmo de limiar. Desaqueça.",
+              "tempo": 55,
+              "dia": 0
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Força Elite",
+              "descricao": "Fortalecimento pesado para potência e prevenção.",
+              "tempo": 60,
+              "dia": 1
+            },
+            {
+              "tipo": "corrida",
+              "titulo": "Corrida Leve",
+              "descricao": "Corrida fácil para volume.",
+              "tempo": 60,
+              "dia": 2
+            },
+            {
+              "tipo": "descanso",
+              "titulo": "Descanso",
+              "descricao": "Preparação para o próximo treino forte.",
+              "dia": 3
+            },
+            {
+              "tipo": "intervalado",
+              "titulo": "Intervalos VO2máx",
+              "descricao": "Ritmo forte com trote de recuperação.",
+              "tempo": 65,
+              "dia": 4
+            },
+            {
+              "tipo": "forca",
+              "titulo": "Força de Sustentação",
+              "descricao": "Treino focado em suportar fadiga muscular.",
+              "tempo": 45,
+              "dia": 5
+            },
+            {
+              "dia": 6,
+              "tipo": "corrida",
+              "titulo": "🔥 PROVA FINAL DE NÍVEL 🔥",
+              "descricao": "Corra os 5km no seu melhor tempo para tentar avançar de nível!",
+              "tempo": 0
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
