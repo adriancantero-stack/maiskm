@@ -6,6 +6,7 @@ import { Check, Lock, MapPin, Trophy, Dumbbell } from 'lucide-react';
 
 export function JourneyPage() {
   const perfil = useLiveQuery(() => db.perfil.get(1));
+  const sessoes = useLiveQuery(() => db.sessoes.toArray());
   const scrollRef = useRef(null);
 
   // Lógica de tempo (Qual dia estamos)
@@ -18,6 +19,13 @@ export function JourneyPage() {
   
   // Total de dias corridos desde o início (dia absoluto)
   const diaAbsolutoAtual = perfil ? Math.max(0, diffDays) : 0;
+
+  // Dias concluídos baseados no histórico real!
+  const diasCompletados = (sessoes || []).map(s => {
+    const d = new Date(s.data);
+    d.setHours(0, 0, 0, 0);
+    return Math.floor((d - dataInicio) / (1000 * 60 * 60 * 24));
+  });
 
   // Auto-scroll para o dia atual quando a página abre
   useEffect(() => {
@@ -76,7 +84,7 @@ export function JourneyPage() {
         <div className="space-y-6 relative z-10">
           {/* Renderiza o mapa de cima para baixo (do último dia para o primeiro) */}
           {[...jornada].reverse().map((fase, idx) => {
-            const isCompleted = fase.diaAbsoluto < diaAbsolutoAtual;
+            const isCompleted = diasCompletados.includes(fase.diaAbsoluto);
             const isToday = fase.diaAbsoluto === diaAbsolutoAtual;
             const isFuture = fase.diaAbsoluto > diaAbsolutoAtual;
             
