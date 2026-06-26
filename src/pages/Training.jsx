@@ -86,6 +86,7 @@ export function TrainingPage() {
   };
 
   const finishTraining = async () => {
+    if (!isMuted) speak("Treino finalizado. Bom trabalho!");
     setIsActive(false);
     setIsPaused(true);
     releaseWakeLock();
