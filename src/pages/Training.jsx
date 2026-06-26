@@ -32,8 +32,19 @@ export function TrainingPage() {
     if (!isActive || isPaused || isMuted) return;
 
     if (!startSpoken.current) {
+      const motivacionais = [
+        "Vamos pra cima!",
+        "Um passo de cada vez.",
+        "Lembre-se de respirar fundo.",
+        "Você consegue!",
+        "Hoje é o seu dia.",
+        "Aproveite a sua corrida.",
+        "Mantenha o foco!"
+      ];
+      const fraseMotivacional = motivacionais[Math.floor(Math.random() * motivacionais.length)];
       const objetivo = treinoHoje ? `Objetivo de hoje: ${treinoHoje.titulo}.` : 'Bom treino!';
-      speak(`Treino iniciado. ${objetivo}`);
+      
+      speak(`Treino iniciado. ${objetivo} ${fraseMotivacional}`);
       startSpoken.current = true;
     }
 
