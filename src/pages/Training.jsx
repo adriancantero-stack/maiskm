@@ -97,7 +97,23 @@ export function TrainingPage() {
   };
 
   const finishTraining = async () => {
-    if (!isMuted) speak("Treino finalizado. Bom trabalho!");
+    if (!isMuted) {
+      const minutos = Math.floor(timer / 60);
+      const segundos = timer % 60;
+      let tempoStr = "";
+      if (minutos > 0) tempoStr += `${minutos} minuto${minutos !== 1 ? 's' : ''}`;
+      if (segundos > 0) tempoStr += `${minutos > 0 ? ' e ' : ''}${segundos} segundo${segundos !== 1 ? 's' : ''}`;
+      
+      let distStr = "";
+      if (distance < 1000) {
+        distStr = `${Math.floor(distance)} metros`;
+      } else {
+        const km = (distance / 1000).toFixed(1).replace('.', ' vírgula ');
+        distStr = `${km} quilômetros`;
+      }
+      
+      speak(`Treino finalizado. Bom trabalho! Você completou ${distStr} em ${tempoStr}.`);
+    }
     setIsActive(false);
     setIsPaused(true);
     releaseWakeLock();
