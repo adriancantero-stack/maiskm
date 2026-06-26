@@ -23,6 +23,9 @@ export function TrainingPage() {
   const [fase, setFase] = useState(hasPhases ? 'AQUECIMENTO' : 'TREINO');
   const finishBtnRef = useRef(null);
   
+  const warmupDistance = useRef(0);
+  const cooldownDistance = useRef(0);
+  
   const { requestWakeLock, releaseWakeLock } = useWakeLock();
   const { distance, currentPace, gpsAccuracy, error } = useGeolocation(isActive && !isPaused);
   const { speak } = useVoice(perfil);
@@ -82,11 +85,13 @@ export function TrainingPage() {
     const DESAQUECIMENTO_SEC = 180; // 3 min
 
     if (fase === 'AQUECIMENTO' && timer >= AQUECIMENTO_SEC) {
+      warmupDistance.current = distance; // Guarda a distância andada no aquecimento
       setFase('TREINO');
       if (!isMuted) speak("Corpo aquecido! Agora comece o seu treino principal de corrida.");
     }
 
     if (fase === 'TREINO' && timer >= AQUECIMENTO_SEC + TREINO_SEC) {
+      cooldownDistance.current = distance; // Guarda a distância até o fim do treino
       setFase('DESAQUECIMENTO');
       if (!isMuted) speak("Treino principal concluído. Vamos caminhar devagar por 3 minutos para desaquecer e relaxar.");
     }
@@ -163,45 +168,69 @@ export function TrainingPage() {
   };
 
   const finishTraining = async () => {
-    if (!isMuted) {
-      const minutos = Math.floor(timer / 60);
-      const segundos = timer % 60;
+    // Calcular apenas a parte da CORRIDA, excluindo aquecimento e desaquecimento
+    let distCorrida = distance;
+    let tempoCorrida = timer;
+
+    if (hasPhases) {
+      if (fase === 'AQUECIMENTO') {
+        distCorrida = 0; // Só aqueceu e parou
+        tempoCorrida = 0;
+      } else if (fase === 'TREINO') {
+        distCorrida = distance - warmupDistance.current;
+        tempoCorrida = timer - 300; // Tira os 5 min de aquecimento
+      } else if (fase === 'DESAQUECIMENTO' || fase === 'FINALIZADO') {
+        distCorrida = cooldownDistance.current - warmupDistance.current;
+        tempoCorrida = treinoHoje?.tempo ? treinoHoje.tempo * 60 : 1800; // Apenas o tempo cravado do treino
+      }
+    }
+
+    // Para evitar tempo/distancia negativos por bugs
+    if (distCorrida < 0) distCorrida = 0;
+    if (tempoCorrida < 0) tempoCorrida = 0;
+
+    if (!isMuted && tempoCorrida > 0) {
+      const minutos = Math.floor(tempoCorrida / 60);
+      const segundos = tempoCorrida % 60;
       let tempoStr = "";
       if (minutos > 0) tempoStr += `${minutos} minuto${minutos !== 1 ? 's' : ''}`;
       if (segundos > 0) tempoStr += `${minutos > 0 ? ' e ' : ''}${segundos} segundo${segundos !== 1 ? 's' : ''}`;
       
       let distStr = "";
-      if (distance < 1000) {
-        distStr = `${Math.floor(distance)} metros`;
+      if (distCorrida < 1000) {
+        distStr = `${Math.floor(distCorrida)} metros`;
       } else {
-        const km = (distance / 1000).toFixed(1).replace('.', ' vírgula ');
+        const km = (distCorrida / 1000).toFixed(1).replace('.', ' vírgula ');
         distStr = `${km} quilômetros`;
       }
 
       let paceStr = "";
-      if (distance >= 100) { // Se andou pelo menos 100m para ter pace razoável
-        const paceMedio = timer / (distance / 1000);
-        if (paceMedio > 0 && paceMedio < 3600) { // Validação de sanidade (pace menor q 1 hora)
+      if (distCorrida >= 100) { 
+        const paceMedio = tempoCorrida / (distCorrida / 1000);
+        if (paceMedio > 0 && paceMedio < 3600) { 
           const paceMin = Math.floor(paceMedio / 60);
           const paceSec = Math.floor(paceMedio % 60);
           paceStr = ` com um pace médio de ${paceMin} minutos e ${paceSec} segundos por quilômetro`;
         }
       }
       
-      speak(`Treino finalizado. Bom trabalho! Você completou ${distStr} em ${tempoStr}${paceStr}.`);
+      speak(`Treino finalizado. Bom trabalho! Você completou ${distStr} de corrida em ${tempoStr}${paceStr}.`);
+    } else if (!isMuted && tempoCorrida === 0) {
+      speak("Treino finalizado no aquecimento.");
     }
+    
     setIsActive(false);
     setIsPaused(true);
     releaseWakeLock();
     
-    // Salvar no IndexedDB
+    // Salvar no IndexedDB (Somente os dados reais da corrida)
     await db.sessoes.add({
       data: new Date(),
-      duracao: timer,
-      distancia: distance,
-      paceMedio: timer / (distance / 1000),
-      calorias: Math.round((perfil?.peso || 70) * (distance / 1000) * 1.036),
-      splits: [], // MVP simplificado
+      duracao: tempoCorrida,
+      distancia: distCorrida,
+      paceMedio: tempoCorrida > 0 && distCorrida > 0 ? tempoCorrida / (distCorrida / 1000) : 0,
+      calorias: Math.round((perfil?.peso || 70) * (distCorrida / 1000) * 1.036),
+      splits: [], 
       planoRef: perfil?.distanciaAlvo,
     });
 
