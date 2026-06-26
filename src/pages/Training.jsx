@@ -177,8 +177,18 @@ export function TrainingPage() {
         const km = (distance / 1000).toFixed(1).replace('.', ' vírgula ');
         distStr = `${km} quilômetros`;
       }
+
+      let paceStr = "";
+      if (distance >= 100) { // Se andou pelo menos 100m para ter pace razoável
+        const paceMedio = timer / (distance / 1000);
+        if (paceMedio > 0 && paceMedio < 3600) { // Validação de sanidade (pace menor q 1 hora)
+          const paceMin = Math.floor(paceMedio / 60);
+          const paceSec = Math.floor(paceMedio % 60);
+          paceStr = ` com um pace médio de ${paceMin} minutos e ${paceSec} segundos por quilômetro`;
+        }
+      }
       
-      speak(`Treino finalizado. Bom trabalho! Você completou ${distStr} em ${tempoStr}.`);
+      speak(`Treino finalizado. Bom trabalho! Você completou ${distStr} em ${tempoStr}${paceStr}.`);
     }
     setIsActive(false);
     setIsPaused(true);
