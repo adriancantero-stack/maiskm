@@ -19,7 +19,7 @@ export function TrainingPage() {
   const [timer, setTimer] = useState(0); // em segundos
   const [isMuted, setIsMuted] = useState(false);
   const [autoPaused, setAutoPaused] = useState(false);
-  const hasPhases = treinoHoje && ['intervalado', 'continuo', 'longo'].includes(treinoHoje.tipo);
+  const hasPhases = treinoHoje && ['intervalado', 'continuo', 'longo', 'corrida'].includes(treinoHoje.tipo);
   const [fase, setFase] = useState(hasPhases ? 'AQUECIMENTO' : 'TREINO');
   const finishBtnRef = useRef(null);
   

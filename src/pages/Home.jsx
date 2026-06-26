@@ -34,6 +34,12 @@ export function HomePage() {
   const treinoHoje = semanaData.dias.find(d => d.dia === diaAtual) || semanaData.dias[0];
 
   const iniciarTreino = () => {
+    // Desbloqueia o Áudio/Voz no momento do clique (Regra dos navegadores Mobile)
+    if ('speechSynthesis' in window) {
+      const unlock = new SpeechSynthesisUtterance('');
+      window.speechSynthesis.speak(unlock);
+    }
+
     if (treinoHoje.tipo === 'forca') {
       navigate('/strength', { state: { treino: treinoHoje } });
     } else {
