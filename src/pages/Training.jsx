@@ -18,6 +18,7 @@ export function TrainingPage() {
   const [isPaused, setIsPaused] = useState(false);
   const [timer, setTimer] = useState(0); // em segundos
   const [isMuted, setIsMuted] = useState(false);
+  const [autoPaused, setAutoPaused] = useState(false);
   
   const { requestWakeLock, releaseWakeLock } = useWakeLock();
   const { distance, currentPace, gpsAccuracy, error } = useGeolocation(isActive && !isPaused);
@@ -86,12 +87,41 @@ export function TrainingPage() {
     return () => clearInterval(interval);
   }, [isActive, isPaused]);
 
+  const lastDistRef = useRef(0);
+  const timeAtLastMoveRef = useRef(0);
+
+  // Monitora a distância para retomar se estiver em auto-pause
+  useEffect(() => {
+    if (distance > lastDistRef.current) {
+      if (autoPaused) {
+        setAutoPaused(false);
+        setIsPaused(false);
+        if (!isMuted) speak("Treino retomado automaticamente.");
+      }
+      lastDistRef.current = distance;
+      timeAtLastMoveRef.current = timer;
+    }
+  }, [distance, autoPaused, isMuted, speak, timer]);
+
+  // Monitora o tempo sem mover para ativar o auto-pause
+  useEffect(() => {
+    if (isActive && !isPaused && timer > 0) {
+      if (timer - timeAtLastMoveRef.current > 20) {
+        setAutoPaused(true);
+        setIsPaused(true);
+        if (!isMuted) speak("Treino pausado automaticamente.");
+      }
+    }
+  }, [timer, isActive, isPaused, isMuted, speak]);
   const togglePause = () => {
     if (isActive && !isPaused) {
       setIsPaused(true);
+      setAutoPaused(false);
       if (!isMuted) speak("Treino pausado.");
     } else if (isActive && isPaused) {
       setIsPaused(false);
+      setAutoPaused(false);
+      timeAtLastMoveRef.current = timer;
       if (!isMuted) speak("Treino retomado.");
     }
   };
