@@ -14,20 +14,40 @@ export function TrainingPage() {
   const treinoHoje = location.state?.treino || null;
   
   const perfil = useLiveQuery(() => db.perfil.get(1));
+  // Carrega estado de recovery (anti-crash)
+  const [initialState] = useState(() => {
+    const saved = localStorage.getItem('maiskm_running_state');
+    if (saved) {
+      try {
+        const state = JSON.parse(saved);
+        // Recupera apenas se for do mesmo treino e tiver menos de 2 horas
+        if (Date.now() - state.lastUpdate < 2 * 60 * 60 * 1000 && (!treinoHoje || state.treinoId === treinoHoje.id)) {
+          return state;
+        }
+      } catch (e) { console.error(e); }
+    }
+    return null;
+  });
+
+  const hasPhases = treinoHoje && ['intervalado', 'continuo', 'longo', 'corrida'].includes(treinoHoje.tipo);
+  
+  const [fase, setFase] = useState(initialState?.fase || (hasPhases ? 'AQUECIMENTO' : 'TREINO'));
   const [isActive, setIsActive] = useState(true);
-  const [isPaused, setIsPaused] = useState(false);
-  const [timer, setTimer] = useState(0); // em segundos
+  const [isPaused, setIsPaused] = useState(initialState ? true : false); // Se recuperou, entra pausado por segurança
+  const [timer, setTimer] = useState(initialState?.timer || 0); // em segundos
   const [isMuted, setIsMuted] = useState(false);
   const [autoPaused, setAutoPaused] = useState(false);
-  const hasPhases = treinoHoje && ['intervalado', 'continuo', 'longo', 'corrida'].includes(treinoHoje.tipo);
-  const [fase, setFase] = useState(hasPhases ? 'AQUECIMENTO' : 'TREINO');
+  
   const finishBtnRef = useRef(null);
   
-  const warmupDistance = useRef(0);
-  const cooldownDistance = useRef(0);
+  const warmupDistance = useRef(initialState?.warmupDistance || 0);
+  const cooldownDistance = useRef(initialState?.cooldownDistance || 0);
   
+  const startTimeRef = useRef(Date.now());
+  const accumulatedTimeRef = useRef(initialState?.accumulatedTime || (initialState?.timer || 0));
+
   const { requestWakeLock, releaseWakeLock } = useWakeLock();
-  const { distance, currentPace, gpsAccuracy, error } = useGeolocation(isActive && !isPaused);
+  const { distance, currentPace, gpsAccuracy, error } = useGeolocation(isActive && !isPaused, initialState?.distance || 0);
   const { speak } = useVoice(perfil);
 
   const lastSpokenKm = useRef(0);
@@ -114,18 +134,42 @@ export function TrainingPage() {
     }
   }, [isActive, isPaused, requestWakeLock, releaseWakeLock]);
 
-  // Lógica do Cronômetro
+  // Lógica do Cronômetro Imortal (Resistente a background freeze)
   useEffect(() => {
     let interval = null;
     if (isActive && !isPaused) {
+      startTimeRef.current = Date.now();
       interval = setInterval(() => {
-        setTimer((t) => t + 1);
+        const currentDelta = Math.floor((Date.now() - startTimeRef.current) / 1000);
+        setTimer(accumulatedTimeRef.current + currentDelta);
       }, 1000);
     } else {
+      if (timer > 0) {
+        accumulatedTimeRef.current = timer;
+      }
       clearInterval(interval);
     }
     return () => clearInterval(interval);
   }, [isActive, isPaused]);
+
+  // Auto-Save de Segurança (Anti-Crash) a cada 5 segundos
+  useEffect(() => {
+    if (isActive && !isPaused) {
+      const saveInterval = setInterval(() => {
+        localStorage.setItem('maiskm_running_state', JSON.stringify({
+          timer,
+          distance,
+          fase,
+          warmupDistance: warmupDistance.current,
+          cooldownDistance: cooldownDistance.current,
+          accumulatedTime: timer,
+          lastUpdate: Date.now(),
+          treinoId: treinoHoje?.id || null
+        }));
+      }, 5000);
+      return () => clearInterval(saveInterval);
+    }
+  }, [isActive, isPaused, timer, distance, fase, treinoHoje]);
 
   const lastDistRef = useRef(0);
   const timeAtLastMoveRef = useRef(0);
@@ -234,11 +278,13 @@ export function TrainingPage() {
       planoRef: perfil?.distanciaAlvo,
     });
 
+    localStorage.removeItem('maiskm_running_state'); // Limpa o backup
     navigate('/history');
   };
 
   const cancelTraining = () => {
     if (window.confirm("Deseja desistir deste treino? Ele não será salvo no histórico.")) {
+      localStorage.removeItem('maiskm_running_state'); // Limpa o backup
       releaseWakeLock();
       navigate('/home');
     }

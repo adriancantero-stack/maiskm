@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { getDistance } from '../utils/haversine';
 
-export function useGeolocation(isActive) {
-  const [distance, setDistance] = useState(0); // em metros
+export function useGeolocation(isActive, initialDistance = 0) {
+  const [distance, setDistance] = useState(initialDistance); // em metros
   const [currentPace, setCurrentPace] = useState(0); // segundos por km
   const [lastPosition, setLastPosition] = useState(null);
   const [gpsAccuracy, setGpsAccuracy] = useState(null);

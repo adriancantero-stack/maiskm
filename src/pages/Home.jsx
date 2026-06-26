@@ -37,8 +37,11 @@ export function HomePage() {
     // Desbloqueia o Áudio/Voz no momento do clique (Regra dos navegadores Mobile)
     if ('speechSynthesis' in window) {
       const unlock = new SpeechSynthesisUtterance('');
+      unlock.volume = 0;
       window.speechSynthesis.speak(unlock);
     }
+
+    alert("⚠️ ATENÇÃO: Para o GPS e o Treinador de Voz funcionarem sem interrupções, mantenha a TELA LIGADA e o aplicativo aberto durante toda a corrida. (Se a tela apagar, o sistema do celular pausa o GPS).");
 
     if (treinoHoje.tipo === 'forca') {
       navigate('/strength', { state: { treino: treinoHoje } });
