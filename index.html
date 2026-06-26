@@ -10,7 +10,10 @@
     <title>MaisKM | O Seu Treinador de Bolso</title>
     <meta name="title" content="MaisKM | O Seu Treinador de Bolso" />
     <meta name="description" content="Saia do sofá e alcance seus primeiros 5KM! Treinos personalizados, orientação por voz e GPS integrado no seu bolso. Comece agora a sua jornada de corrida." />
-    <meta name="keywords" content="corrida, treino, 5km, gps, running, coach" />
+    <meta name="keywords" content="corrida, treino de corrida, 5km, planilhas de corrida, gps, running app, treinador virtual, caminhada, MaisKM" />
+    <meta name="author" content="CanteroLabs" />
+    <meta name="publisher" content="CanteroLabs" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="theme-color" content="#f97316" />
 
     <!-- Canonical URL -->
@@ -32,28 +35,64 @@
 
     <!-- Structured Data (JSON-LD) para AIs e Google -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "MaisKM",
-      "applicationCategory": "HealthAndFitnessApplication",
-      "operatingSystem": "Web, Android, iOS",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "BRL"
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "MaisKM",
+        "applicationCategory": "HealthAndFitnessApplication",
+        "operatingSystem": "Web, Android, iOS",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "BRL"
+        },
+        "description": "Aplicativo de treinos de corrida focado na ciência do esporte. Treinos personalizados, orientação por voz e acompanhamento por GPS no seu bolso.",
+        "url": "https://maiskm.com.br/",
+        "image": "https://maiskm.com.br/logo.png"
       },
-      "description": "Aplicativo de treinos de corrida focado na ciência do esporte. Treinos personalizados, orientação por voz e acompanhamento por GPS no seu bolso.",
-      "url": "https://maiskm.com.br/",
-      "image": "https://maiskm.com.br/logo.png"
-    }
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "MaisKM | Treinador de Bolso",
+        "url": "https://maiskm.com.br/",
+        "description": "O melhor app de corrida para iniciantes chegarem aos seus primeiros 5km.",
+        "publisher": {
+          "@type": "Organization",
+          "name": "CanteroLabs"
+        }
+      }
+    ]
     </script>
     
     <!-- Preload Logo -->
     <link rel="preload" href="/logo.png" as="image" type="image/png" />
   </head>
   <body>
-    <div id="root"></div>
+    <noscript>
+      <header>
+        <h1>MaisKM - O Seu Treinador de Bolso</h1>
+        <p>Saia do sofá e alcance seus primeiros 5KM! O MaisKM é um aplicativo web (PWA) de treinos de corrida personalizados.</p>
+      </header>
+      <main>
+        <section>
+          <h2>Como funciona?</h2>
+          <p>Oferecemos orientação por voz a cada etapa do seu treino, acompanhamento preciso por GPS e planilhas de corrida focadas na ciência do esporte, desde caminhadas até corridas de 5km, 10km e Meia Maratona.</p>
+        </section>
+        <section>
+          <h2>Para quem é?</h2>
+          <p>Seja você um corredor iniciante ou alguém buscando performance, nosso treinador virtual guia seu pace, ritmo e distância diretamente pelo navegador. Acesse e comece a correr!</p>
+        </section>
+      </main>
+      <footer>Desenvolvido por CanteroLabs. Habilite o JavaScript para usar o app.</footer>
+    </noscript>
+    <div id="root">
+      <!-- SEO Fallback e Skeleton Loading -->
+      <div style="display:none; visibility:hidden;" aria-hidden="true">
+        <h2>Treinos de Corrida para 5KM, 10KM e 21KM</h2>
+        <p>Acompanhe sua evolução na corrida com áudio em português, métricas de pace e distância.</p>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

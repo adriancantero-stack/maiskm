@@ -11,9 +11,11 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
+        id: '/',
         name: 'MaisKM - Treino de Corrida',
         short_name: 'MaisKM',
         description: 'Aplicativo de treino de corrida com GPS e Treinador por voz',
+        categories: ['fitness', 'health', 'sports'],
         theme_color: '#FF5722',
         background_color: '#ffffff',
         display: 'standalone',
