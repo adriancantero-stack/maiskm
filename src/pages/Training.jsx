@@ -244,6 +244,27 @@ export function TrainingPage() {
     }
   };
 
+  // Cálculos para exibição separada na tela por fase
+  let displayDistance = distance;
+  let displayTimer = timer;
+
+  if (hasPhases) {
+    if (fase === 'AQUECIMENTO') {
+      displayDistance = distance;
+      displayTimer = timer;
+    } else if (fase === 'TREINO') {
+      displayDistance = distance - warmupDistance.current;
+      displayTimer = timer - 300; // 5 min de aquecimento
+    } else if (fase === 'DESAQUECIMENTO' || fase === 'FINALIZADO') {
+      displayDistance = distance - cooldownDistance.current;
+      displayTimer = timer - 300 - (treinoHoje?.tempo ? treinoHoje.tempo * 60 : 1800);
+    }
+  }
+
+  // Previne números negativos visuais por pequenos delays
+  if (displayDistance < 0) displayDistance = 0;
+  if (displayTimer < 0) displayTimer = 0;
+
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-6 relative">
       {/* Header Info */}
@@ -280,7 +301,7 @@ export function TrainingPage() {
       <div className="text-center mt-12 mb-16 w-full">
         <p className="text-gray-400 font-bold tracking-widest text-sm mb-2">DISTÂNCIA</p>
         <div className="text-[5rem] font-black leading-none mb-2 tabular-nums tracking-tighter">
-          {formatDistance(distance)}
+          {formatDistance(displayDistance)}
         </div>
         <p className="text-gray-400 text-xl font-medium">km</p>
       </div>
@@ -288,7 +309,7 @@ export function TrainingPage() {
       <div className="grid grid-cols-2 gap-8 w-full max-w-sm mb-16">
         <div className="text-center">
           <p className="text-gray-400 text-xs font-bold mb-1 tracking-wider">TEMPO</p>
-          <p className="text-4xl font-bold tabular-nums">{formatTime(timer)}</p>
+          <p className="text-4xl font-bold tabular-nums">{formatTime(displayTimer)}</p>
         </div>
         <div className="text-center">
           <p className="text-gray-400 text-xs font-bold mb-1 tracking-wider">PACE</p>
