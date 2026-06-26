@@ -19,6 +19,9 @@ export function TrainingPage() {
   const [timer, setTimer] = useState(0); // em segundos
   const [isMuted, setIsMuted] = useState(false);
   const [autoPaused, setAutoPaused] = useState(false);
+  const hasPhases = treinoHoje && ['intervalado', 'continuo', 'longo'].includes(treinoHoje.tipo);
+  const [fase, setFase] = useState(hasPhases ? 'AQUECIMENTO' : 'TREINO');
+  const finishBtnRef = useRef(null);
   
   const { requestWakeLock, releaseWakeLock } = useWakeLock();
   const { distance, currentPace, gpsAccuracy, error } = useGeolocation(isActive && !isPaused);
@@ -28,7 +31,7 @@ export function TrainingPage() {
   const halfTimeSpoken = useRef(false);
   const startSpoken = useRef(false);
 
-  // Lógica do Voice Coach
+  // Lógica do Voice Coach e Fases
   useEffect(() => {
     if (!isActive || isPaused || isMuted) return;
 
@@ -45,7 +48,11 @@ export function TrainingPage() {
       const fraseMotivacional = motivacionais[Math.floor(Math.random() * motivacionais.length)];
       const objetivo = treinoHoje ? `Objetivo de hoje: ${treinoHoje.titulo}.` : 'Bom treino!';
       
-      speak(`Treino iniciado. ${objetivo} ${fraseMotivacional}`);
+      if (hasPhases) {
+        speak(`Treino iniciado. ${objetivo} Vamos começar com 5 minutos de caminhada rápida para aquecer o corpo.`);
+      } else {
+        speak(`Treino iniciado. ${objetivo} ${fraseMotivacional}`);
+      }
       startSpoken.current = true;
     }
 
@@ -58,12 +65,40 @@ export function TrainingPage() {
 
     if (treinoHoje?.tempo && !halfTimeSpoken.current) {
       const halfTimeSec = (treinoHoje.tempo * 60) / 2;
-      if (timer >= halfTimeSec) {
+      const startOffset = hasPhases ? 300 : 0;
+      if (timer >= startOffset + halfTimeSec) {
         halfTimeSpoken.current = true;
         speak("Metade do treino concluída. Mantenha o ritmo!");
       }
     }
-  }, [distance, timer, isActive, isPaused, isMuted, speak, treinoHoje, currentPace]);
+  }, [distance, timer, isActive, isPaused, isMuted, speak, treinoHoje, currentPace, hasPhases]);
+
+  // Transições de Fases (Aquecimento -> Treino -> Desaquecimento)
+  useEffect(() => {
+    if (!isActive || isPaused || !hasPhases) return;
+
+    const AQUECIMENTO_SEC = 300; // 5 min
+    const TREINO_SEC = treinoHoje?.tempo ? treinoHoje.tempo * 60 : 1800; // Tempo do plano
+    const DESAQUECIMENTO_SEC = 180; // 3 min
+
+    if (fase === 'AQUECIMENTO' && timer >= AQUECIMENTO_SEC) {
+      setFase('TREINO');
+      if (!isMuted) speak("Corpo aquecido! Agora comece o seu treino principal de corrida.");
+    }
+
+    if (fase === 'TREINO' && timer >= AQUECIMENTO_SEC + TREINO_SEC) {
+      setFase('DESAQUECIMENTO');
+      if (!isMuted) speak("Treino principal concluído. Vamos caminhar devagar por 3 minutos para desaquecer e relaxar.");
+    }
+
+    if (fase === 'DESAQUECIMENTO' && timer >= AQUECIMENTO_SEC + TREINO_SEC + DESAQUECIMENTO_SEC) {
+      setFase('FINALIZADO');
+      if (!isMuted) speak("Desaquecimento concluído. Treino finalizado com sucesso! Parabéns!");
+      setTimeout(() => {
+         finishBtnRef.current?.click();
+      }, 5000);
+    }
+  }, [timer, isActive, isPaused, hasPhases, fase, isMuted, speak, treinoHoje]);
 
   // Lógica do WakeLock (separada do cronômetro para evitar loops)
   useEffect(() => {
@@ -188,6 +223,20 @@ export function TrainingPage() {
 
       {error && <div className="absolute top-20 bg-red-500 text-white p-2 text-xs rounded">{error}</div>}
 
+      {/* Fase atual */}
+      {hasPhases && (
+        <div className="absolute top-24 w-full flex justify-center">
+          <div className={`px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${
+            fase === 'AQUECIMENTO' ? 'bg-blue-500/20 text-blue-400' :
+            fase === 'TREINO' ? 'bg-[var(--color-primary)]/20 text-[var(--color-primary)]' :
+            fase === 'DESAQUECIMENTO' ? 'bg-purple-500/20 text-purple-400' :
+            'bg-gray-800 text-gray-400'
+          }`}>
+            {fase}
+          </div>
+        </div>
+      )}
+
       {/* Main Stats */}
       <div className="text-center mt-12 mb-16 w-full">
         <p className="text-gray-400 font-bold tracking-widest text-sm mb-2">DISTÂNCIA</p>
@@ -212,7 +261,7 @@ export function TrainingPage() {
       <div className="flex items-center justify-center space-x-6">
         {isPaused ? (
           <>
-            <button onClick={finishTraining} className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 active:scale-95 transition-all">
+            <button ref={finishBtnRef} onClick={finishTraining} className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 active:scale-95 transition-all">
               <Square fill="white" size={28} />
             </button>
             <button onClick={togglePause} className="w-24 h-24 bg-[var(--color-primary)] rounded-full flex items-center justify-center hover:bg-orange-600 active:scale-95 shadow-lg shadow-orange-500/30 transition-all">
