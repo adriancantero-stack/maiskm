@@ -103,13 +103,14 @@ export function TrainingPage() {
     }
   }, [distance, autoPaused, isMuted, speak, timer]);
 
-  // Monitora o tempo sem mover para ativar o auto-pause
+  // Monitora o tempo sem mover para ativar o auto-pause (DESATIVADO TEMPORARIAMENTE)
   useEffect(() => {
     if (isActive && !isPaused && timer > 0) {
       if (timer - timeAtLastMoveRef.current > 20) {
-        setAutoPaused(true);
-        setIsPaused(true);
-        if (!isMuted) speak("Treino pausado automaticamente.");
+        // Função desativada a pedido do usuário para testes
+        // setAutoPaused(true);
+        // setIsPaused(true);
+        // if (!isMuted) speak("Treino pausado automaticamente.");
       }
     }
   }, [timer, isActive, isPaused, isMuted, speak]);
