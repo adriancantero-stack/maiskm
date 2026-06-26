@@ -83,6 +83,12 @@ export function ProfilePage() {
       <button onClick={resetData} className="w-full mt-4 py-4 rounded-xl border-2 border-red-100 text-red-500 font-bold active:bg-red-50 transition-colors">
         Apagar Dados e Reiniciar
       </button>
+
+      <div className="mt-8 mb-4 text-center">
+        <p className="text-xs text-gray-400 dark:text-gray-500 font-medium uppercase tracking-wider">
+          Desenvolvido por <span className="text-[var(--color-primary)] font-bold">CanteroLabs</span>
+        </p>
+      </div>
     </div>
   );
 }
