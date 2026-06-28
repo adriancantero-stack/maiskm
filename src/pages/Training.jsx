@@ -354,6 +354,15 @@ export function TrainingPage() {
   if (displayDistance < 0) displayDistance = 0;
   if (displayTimer < 0) displayTimer = 0;
 
+  const getDistanceDisplay = (meters) => {
+    if (meters < 1000) {
+      return { val: Math.floor(meters).toString(), unit: "metros" };
+    } else {
+      return { val: (meters / 1000).toFixed(3).replace('.', ','), unit: "km" };
+    }
+  };
+  const { val: distVal, unit: distUnit } = getDistanceDisplay(displayDistance);
+
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-6 relative">
       {/* Header Info */}
@@ -374,7 +383,7 @@ export function TrainingPage() {
 
       {/* Fase atual */}
       {hasPhases && (
-        <div className="absolute top-24 w-full flex justify-center">
+        <div className="w-full flex justify-center mb-8">
           <div className={`px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${
             fase === 'AQUECIMENTO' ? 'bg-blue-500/20 text-blue-400' :
             fase === 'TREINO' ? 'bg-[var(--color-primary)]/20 text-[var(--color-primary)]' :
@@ -387,16 +396,16 @@ export function TrainingPage() {
       )}
 
       {/* Main Stats - Vertical Layout */}
-      <div className="flex flex-col items-center justify-center w-full space-y-10 mt-12 mb-16">
+      <div className="flex flex-col items-center justify-center w-full space-y-10 mb-16">
         
         {/* Distancia */}
         <div className="text-center">
           <p className="text-gray-400 font-bold tracking-widest text-xs mb-1 uppercase">DISTÂNCIA</p>
           <div className="flex items-baseline justify-center space-x-2">
             <span className="text-[6rem] font-black leading-none tabular-nums tracking-tighter">
-              {formatDistance(displayDistance)}
+              {distVal}
             </span>
-            <span className="text-gray-400 text-2xl font-medium">km</span>
+            <span className="text-gray-400 text-2xl font-medium">{distUnit}</span>
           </div>
         </div>
 
