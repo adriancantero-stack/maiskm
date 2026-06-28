@@ -47,8 +47,12 @@ export function TrainingPage() {
   const accumulatedTimeRef = useRef(initialState?.accumulatedTime || (initialState?.timer || 0));
 
   const { requestWakeLock, releaseWakeLock } = useWakeLock();
-  const { distance, currentPace, gpsAccuracy, error } = useGeolocation(isActive && !isPaused, initialState?.distance || 0);
+  const { distance, currentPace, gpsAccuracy, error, clearPaceQueue } = useGeolocation(isActive && !isPaused, initialState?.distance || 0);
   const { speak } = useVoice(perfil);
+
+  const splitsRef = useRef(initialState?.splits || []);
+  const lastSplitKmRef = useRef(initialState?.splits?.length || 0);
+  const lastSplitTimeRef = useRef(0);
 
   const lastSpokenKm = useRef(0);
   const halfTimeSpoken = useRef(false);
@@ -107,12 +111,14 @@ export function TrainingPage() {
     if (fase === 'AQUECIMENTO' && timer >= AQUECIMENTO_SEC) {
       warmupDistance.current = distance; // Guarda a distância andada no aquecimento
       setFase('TREINO');
+      clearPaceQueue();
       if (!isMuted) speak("Corpo aquecido! Agora comece o seu treino principal de corrida.");
     }
 
     if (fase === 'TREINO' && timer >= AQUECIMENTO_SEC + TREINO_SEC) {
       cooldownDistance.current = distance; // Guarda a distância até o fim do treino
       setFase('DESAQUECIMENTO');
+      clearPaceQueue();
       if (!isMuted) speak("Treino principal concluído. Vamos caminhar devagar por 3 minutos para desaquecer e relaxar.");
     }
 
@@ -133,6 +139,29 @@ export function TrainingPage() {
       releaseWakeLock();
     }
   }, [isActive, isPaused, requestWakeLock, releaseWakeLock]);
+
+  // Monitora e grava Splits (Parciais por KM) apenas na fase TREINO
+  useEffect(() => {
+    if (!isActive || isPaused) return;
+    if (hasPhases && fase !== 'TREINO') return;
+
+    let distFase = hasPhases ? distance - warmupDistance.current : distance;
+    let tempoFase = hasPhases ? timer - 300 : timer;
+    if (distFase < 0) distFase = 0;
+    if (tempoFase < 0) tempoFase = 0;
+
+    const currentKm = Math.floor(distFase / 1000);
+
+    if (currentKm > lastSplitKmRef.current) {
+      const tempoParaEsteKm = tempoFase - lastSplitTimeRef.current;
+      splitsRef.current.push({
+        km: currentKm,
+        ritmo: tempoParaEsteKm
+      });
+      lastSplitKmRef.current = currentKm;
+      lastSplitTimeRef.current = tempoFase;
+    }
+  }, [distance, timer, isActive, isPaused, fase, hasPhases]);
 
   // Lógica do Cronômetro Imortal (Resistente a background freeze)
   useEffect(() => {
@@ -164,7 +193,8 @@ export function TrainingPage() {
           cooldownDistance: cooldownDistance.current,
           accumulatedTime: timer,
           lastUpdate: Date.now(),
-          treinoId: treinoHoje?.id || null
+          treinoId: treinoHoje?.id || null,
+          splits: splitsRef.current
         }));
       }, 5000);
       return () => clearInterval(saveInterval);
@@ -267,6 +297,19 @@ export function TrainingPage() {
     setIsPaused(true);
     releaseWakeLock();
     
+    // Grava a última parcial fracionada se houver resto
+    const restoMeters = distCorrida % 1000;
+    if (restoMeters > 15) {
+      const tempoFracao = tempoCorrida - lastSplitTimeRef.current;
+      const ritmoProporcional = tempoFracao / (restoMeters / 1000);
+      splitsRef.current.push({
+        km: (distCorrida / 1000).toFixed(2).replace('.', ','),
+        ritmo: ritmoProporcional,
+        isFraction: true,
+        fracaoText: `${Math.floor(restoMeters)}m`
+      });
+    }
+
     // Salvar no IndexedDB (Somente os dados reais da corrida)
     await db.sessoes.add({
       data: new Date(),
@@ -274,7 +317,7 @@ export function TrainingPage() {
       distancia: distCorrida,
       paceMedio: tempoCorrida > 0 && distCorrida > 0 ? tempoCorrida / (distCorrida / 1000) : 0,
       calorias: Math.round((perfil?.peso || 70) * (distCorrida / 1000) * 1.036),
-      splits: [], 
+      splits: splitsRef.current, 
       planoRef: perfil?.distanciaAlvo,
     });
 
@@ -343,24 +386,36 @@ export function TrainingPage() {
         </div>
       )}
 
-      {/* Main Stats */}
-      <div className="text-center mt-12 mb-16 w-full">
-        <p className="text-gray-400 font-bold tracking-widest text-sm mb-2">DISTÂNCIA</p>
-        <div className="text-[5rem] font-black leading-none mb-2 tabular-nums tracking-tighter">
-          {formatDistance(displayDistance)}
+      {/* Main Stats - Vertical Layout */}
+      <div className="flex flex-col items-center justify-center w-full space-y-10 mt-12 mb-16">
+        
+        {/* Distancia */}
+        <div className="text-center">
+          <p className="text-gray-400 font-bold tracking-widest text-xs mb-1 uppercase">DISTÂNCIA</p>
+          <div className="flex items-baseline justify-center space-x-2">
+            <span className="text-[6rem] font-black leading-none tabular-nums tracking-tighter">
+              {formatDistance(displayDistance)}
+            </span>
+            <span className="text-gray-400 text-2xl font-medium">km</span>
+          </div>
         </div>
-        <p className="text-gray-400 text-xl font-medium">km</p>
-      </div>
 
-      <div className="grid grid-cols-2 gap-8 w-full max-w-sm mb-16">
+        {/* Tempo */}
         <div className="text-center">
-          <p className="text-gray-400 text-xs font-bold mb-1 tracking-wider">TEMPO</p>
-          <p className="text-4xl font-bold tabular-nums">{formatTime(displayTimer)}</p>
+          <p className="text-gray-400 font-bold tracking-widest text-xs mb-1 uppercase">TEMPO</p>
+          <span className="text-[4.5rem] font-black leading-none tabular-nums tracking-tighter">
+            {formatTime(displayTimer)}
+          </span>
         </div>
+
+        {/* Pace */}
         <div className="text-center">
-          <p className="text-gray-400 text-xs font-bold mb-1 tracking-wider">PACE</p>
-          <p className="text-4xl font-bold tabular-nums">{formatPace(currentPace)}</p>
+          <p className="text-gray-400 font-bold tracking-widest text-xs mb-1 uppercase">RITMO MÉDIO</p>
+          <span className="text-[4.5rem] font-black leading-none tabular-nums tracking-tighter text-[var(--color-primary)]">
+            {formatPace(currentPace)}
+          </span>
         </div>
+
       </div>
 
       {/* Controls */}

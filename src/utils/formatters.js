@@ -1,6 +1,7 @@
 // pace em segundos por km -> "MM:SS"
 export function formatPace(paceSecs) {
-  if (!paceSecs || !isFinite(paceSecs) || paceSecs <= 0) return "--:--";
+  // Ignora paces impossivelmente lentos (maior que 20 min/km = 1200 segs) que ocorrem por GPS drift parado
+  if (!paceSecs || !isFinite(paceSecs) || paceSecs <= 0 || paceSecs > 1200) return "--:--";
   const mins = Math.floor(paceSecs / 60);
   const secs = Math.floor(paceSecs % 60);
   return `${mins}:${secs.toString().padStart(2, '0')}`;
@@ -18,7 +19,7 @@ export function formatTime(totalSecs) {
   return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }
 
-// metros -> "X.XX km"
+// metros -> "X,XXX km"
 export function formatDistance(meters) {
-  return (meters / 1000).toFixed(2);
+  return (meters / 1000).toFixed(3).replace('.', ',');
 }

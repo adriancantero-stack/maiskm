@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { formatDistance, formatTime, formatPace } from '../utils/formatters';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function HistoryPage() {
+  const [expandedId, setExpandedId] = useState(null);
   const sessoes = useLiveQuery(() => db.sessoes.orderBy('data').reverse().toArray());
 
   if (!sessoes) return <div className="p-4 text-center mt-10">Carregando...</div>;
@@ -109,7 +111,11 @@ export function HistoryPage() {
           <h2 className="font-bold text-xl text-gray-900 dark:text-gray-100 mb-4">Últimos Treinos</h2>
           <div className="space-y-4 pb-8">
             {sessoes.map(sessao => (
-              <div key={sessao.id} className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col hover:border-orange-200 dark:hover:border-orange-500/50 transition-colors duration-300">
+              <div 
+                key={sessao.id} 
+                onClick={() => setExpandedId(expandedId === sessao.id ? null : sessao.id)}
+                className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col hover:border-orange-200 dark:hover:border-orange-500/50 transition-colors duration-300 cursor-pointer"
+              >
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-sm font-bold text-gray-400 dark:text-gray-500 capitalize">
                     {new Date(sessao.data).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'short' })}
@@ -140,6 +146,37 @@ export function HistoryPage() {
                     </>
                   )}
                 </div>
+
+                {/* Parciais (Splits) Estilo Strava */}
+                {expandedId === sessao.id && sessao.splits && sessao.splits.length > 0 && (
+                  <div className="mt-5 pt-4 border-t border-gray-100 dark:border-gray-700 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-4 text-lg">Parciais</h3>
+                    <div className="space-y-3">
+                      <div className="flex text-xs font-bold text-gray-400 uppercase tracking-wider px-1">
+                        <span className="w-12">Km</span>
+                        <span className="w-20">Ritmo</span>
+                        <span className="flex-1 text-right">Volume</span>
+                      </div>
+                      {sessao.splits.map((split, idx) => (
+                        <div key={idx} className="flex items-center text-sm px-1">
+                          <span className="w-12 font-medium text-gray-500 dark:text-gray-400">
+                            {split.isFraction ? split.km.replace('0,', ',') : split.km}
+                          </span>
+                          <span className="w-20 font-bold text-gray-900 dark:text-gray-100">
+                            {formatPace(split.ritmo)}
+                          </span>
+                          <div className="flex-1 flex justify-start items-center">
+                             {/* Barra azul estilo Strava indicando o volume percorrido no intervalo */}
+                             <div 
+                               className="h-6 bg-blue-600 rounded-sm" 
+                               style={{ width: split.isFraction ? '40%' : '100%' }}
+                             ></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>

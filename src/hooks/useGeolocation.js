@@ -110,5 +110,10 @@ export function useGeolocation(isActive, initialDistance = 0) {
     pointsQueueRef.current = [];
   };
 
-  return { distance, currentPace, gpsAccuracy, error, resetGPS };
+  const clearPaceQueue = useCallback(() => {
+    pointsQueueRef.current = [];
+    setCurrentPace(0);
+  }, []);
+
+  return { distance, currentPace, gpsAccuracy, error, resetGPS, clearPaceQueue };
 }
