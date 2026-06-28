@@ -15,39 +15,50 @@ export function useGeolocation(isActive, initialDistance = 0) {
     const { latitude, longitude, accuracy } = position.coords;
     setGpsAccuracy(accuracy);
 
-    // Filtro de acurácia (ignorar se > 20m)
-    if (accuracy > 20) return;
+    // Filtro de acurácia mais rígido (ignorar se a margem de erro for > 15m)
+    if (accuracy > 15) return;
 
     const timestamp = position.timestamp;
 
     setLastPosition((prev) => {
       if (prev) {
+        const timeDiff = (timestamp - prev.timestamp) / 1000; // segundos
+
+        // Ignora pontos gerados rápido demais (< 2s) para evitar o "efeito zig-zag" que infla a distância.
+        if (timeDiff < 2) {
+          return prev; 
+        }
+
         // Calcula distância
         const dist = getDistance(prev.latitude, prev.longitude, latitude, longitude);
         
-        // Se andou uma distância mínima, contabiliza (evita drift de GPS parado)
-        if (dist > 2) {
-          setDistance((d) => d + dist);
+        // Verifica a velocidade (metros por segundo)
+        const velocidade = dist / timeDiff;
 
-          // Lógica de pace atual
-          const timeDiff = (timestamp - prev.timestamp) / 1000; // segundos
-          if (timeDiff > 0) {
-            const pace = (timeDiff / dist) * 1000; // sec / km
-            pointsQueueRef.current.push({ dist, timeDiff, timestamp });
-            
-            // Manter apenas últimos 20 segundos para média móvel de pace
-            pointsQueueRef.current = pointsQueueRef.current.filter(p => timestamp - p.timestamp < 20000);
-            
-            let totalDist = 0;
-            let totalTime = 0;
-            for (let p of pointsQueueRef.current) {
-              totalDist += p.dist;
-              totalTime += p.timeDiff;
-            }
-            if (totalDist > 0) {
-              setCurrentPace((totalTime / totalDist) * 1000);
-            }
-          }
+        // Filtro de Teletransporte (GPS Jump):
+        // Se a velocidade for maior que 12 m/s, é um pulo do GPS.
+        // Se andou menos de 1.5 metros em >2 segundos, é drift (parado).
+        if (velocidade > 12 || dist < 1.5) {
+          // Ignora a distância falsa, mas não atualiza a última posição válida
+          return prev;
+        }
+
+        setDistance((d) => d + dist);
+
+        // Lógica de pace atual
+        pointsQueueRef.current.push({ dist, timeDiff, timestamp });
+        
+        // Manter apenas últimos 30 segundos para média móvel de pace (mais suave)
+        pointsQueueRef.current = pointsQueueRef.current.filter(p => timestamp - p.timestamp < 30000);
+        
+        let totalDist = 0;
+        let totalTime = 0;
+        for (let p of pointsQueueRef.current) {
+          totalDist += p.dist;
+          totalTime += p.timeDiff;
+        }
+        if (totalDist > 0) {
+          setCurrentPace((totalTime / totalDist) * 1000);
         }
       }
       return { latitude, longitude, timestamp };
