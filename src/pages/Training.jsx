@@ -29,9 +29,6 @@ export function TrainingPage() {
     return null;
   });
 
-  const hasPhases = treinoHoje && ['intervalado', 'continuo', 'longo', 'corrida'].includes(treinoHoje.tipo);
-  
-  const [fase, setFase] = useState(initialState?.fase || (hasPhases ? 'AQUECIMENTO' : 'TREINO'));
   const [isActive, setIsActive] = useState(true);
   const [isPaused, setIsPaused] = useState(initialState ? true : false); // Se recuperou, entra pausado por segurança
   const [timer, setTimer] = useState(initialState?.timer || 0); // em segundos
@@ -39,9 +36,6 @@ export function TrainingPage() {
   const [autoPaused, setAutoPaused] = useState(false);
   
   const finishBtnRef = useRef(null);
-  
-  const warmupDistance = useRef(initialState?.warmupDistance || 0);
-  const cooldownDistance = useRef(initialState?.cooldownDistance || 0);
   
   const startTimeRef = useRef(Date.now());
   const accumulatedTimeRef = useRef(initialState?.accumulatedTime || (initialState?.timer || 0));
@@ -56,9 +50,10 @@ export function TrainingPage() {
 
   const lastSpokenKm = useRef(0);
   const halfTimeSpoken = useRef(false);
+  const targetSpoken = useRef(false);
   const startSpoken = useRef(false);
 
-  // Lógica do Voice Coach e Fases
+  // Lógica do Voice Coach
   useEffect(() => {
     if (!isActive || isPaused || isMuted) return;
 
@@ -75,11 +70,7 @@ export function TrainingPage() {
       const fraseMotivacional = motivacionais[Math.floor(Math.random() * motivacionais.length)];
       const objetivo = treinoHoje ? `Objetivo de hoje: ${treinoHoje.titulo}.` : 'Bom treino!';
       
-      if (hasPhases) {
-        speak(`Treino iniciado. ${objetivo} Vamos começar com 5 minutos de caminhada rápida para aquecer o corpo.`);
-      } else {
-        speak(`Treino iniciado. ${objetivo} ${fraseMotivacional}`);
-      }
+      speak(`Treino iniciado. ${objetivo} ${fraseMotivacional}`);
       startSpoken.current = true;
     }
 
@@ -90,46 +81,21 @@ export function TrainingPage() {
       speak(`Você completou ${currentKm} quilômetro${currentKm > 1 ? 's' : ''}. ${paceMsg}`);
     }
 
-    if (treinoHoje?.tempo && !halfTimeSpoken.current) {
-      const halfTimeSec = (treinoHoje.tempo * 60) / 2;
-      const startOffset = hasPhases ? 300 : 0;
-      if (timer >= startOffset + halfTimeSec) {
+    if (treinoHoje?.tempo) {
+      const targetSec = treinoHoje.tempo * 60;
+      const halfTimeSec = targetSec / 2;
+      
+      if (!halfTimeSpoken.current && timer >= halfTimeSec) {
         halfTimeSpoken.current = true;
         speak("Metade do treino concluída. Mantenha o ritmo!");
       }
+
+      if (!targetSpoken.current && timer >= targetSec) {
+        targetSpoken.current = true;
+        speak("Você atingiu o tempo alvo de hoje. Treino concluído! Excelente trabalho.");
+      }
     }
-  }, [distance, timer, isActive, isPaused, isMuted, speak, treinoHoje, currentPace, hasPhases]);
-
-  // Transições de Fases (Aquecimento -> Treino -> Desaquecimento)
-  useEffect(() => {
-    if (!isActive || isPaused || !hasPhases) return;
-
-    const AQUECIMENTO_SEC = 300; // 5 min
-    const TREINO_SEC = treinoHoje?.tempo ? treinoHoje.tempo * 60 : 1800; // Tempo do plano
-    const DESAQUECIMENTO_SEC = 180; // 3 min
-
-    if (fase === 'AQUECIMENTO' && timer >= AQUECIMENTO_SEC) {
-      warmupDistance.current = distance; // Guarda a distância andada no aquecimento
-      setFase('TREINO');
-      clearPaceQueue();
-      if (!isMuted) speak("Corpo aquecido! Agora comece o seu treino principal de corrida.");
-    }
-
-    if (fase === 'TREINO' && timer >= AQUECIMENTO_SEC + TREINO_SEC) {
-      cooldownDistance.current = distance; // Guarda a distância até o fim do treino
-      setFase('DESAQUECIMENTO');
-      clearPaceQueue();
-      if (!isMuted) speak("Treino principal concluído. Vamos caminhar devagar por 3 minutos para desaquecer e relaxar.");
-    }
-
-    if (fase === 'DESAQUECIMENTO' && timer >= AQUECIMENTO_SEC + TREINO_SEC + DESAQUECIMENTO_SEC) {
-      setFase('FINALIZADO');
-      if (!isMuted) speak("Desaquecimento concluído. Treino finalizado com sucesso! Parabéns!");
-      setTimeout(() => {
-         finishBtnRef.current?.click();
-      }, 5000);
-    }
-  }, [timer, isActive, isPaused, hasPhases, fase, isMuted, speak, treinoHoje]);
+  }, [distance, timer, isActive, isPaused, isMuted, speak, treinoHoje, currentPace]);
 
   // Lógica do WakeLock (separada do cronômetro para evitar loops)
   useEffect(() => {
@@ -140,28 +106,22 @@ export function TrainingPage() {
     }
   }, [isActive, isPaused, requestWakeLock, releaseWakeLock]);
 
-  // Monitora e grava Splits (Parciais por KM) apenas na fase TREINO
+  // Monitora e grava Splits (Parciais por KM)
   useEffect(() => {
     if (!isActive || isPaused) return;
-    if (hasPhases && fase !== 'TREINO') return;
 
-    let distFase = hasPhases ? distance - warmupDistance.current : distance;
-    let tempoFase = hasPhases ? timer - 300 : timer;
-    if (distFase < 0) distFase = 0;
-    if (tempoFase < 0) tempoFase = 0;
-
-    const currentKm = Math.floor(distFase / 1000);
+    const currentKm = Math.floor(distance / 1000);
 
     if (currentKm > lastSplitKmRef.current) {
-      const tempoParaEsteKm = tempoFase - lastSplitTimeRef.current;
+      const tempoParaEsteKm = timer - lastSplitTimeRef.current;
       splitsRef.current.push({
         km: currentKm,
         ritmo: tempoParaEsteKm
       });
       lastSplitKmRef.current = currentKm;
-      lastSplitTimeRef.current = tempoFase;
+      lastSplitTimeRef.current = timer;
     }
-  }, [distance, timer, isActive, isPaused, fase, hasPhases]);
+  }, [distance, timer, isActive, isPaused]);
 
   // Lógica do Cronômetro Imortal (Resistente a background freeze)
   useEffect(() => {
@@ -188,9 +148,6 @@ export function TrainingPage() {
         localStorage.setItem('maiskm_running_state', JSON.stringify({
           timer,
           distance,
-          fase,
-          warmupDistance: warmupDistance.current,
-          cooldownDistance: cooldownDistance.current,
           accumulatedTime: timer,
           lastUpdate: Date.now(),
           treinoId: treinoHoje?.id || null,
@@ -199,7 +156,7 @@ export function TrainingPage() {
       }, 5000);
       return () => clearInterval(saveInterval);
     }
-  }, [isActive, isPaused, timer, distance, fase, treinoHoje]);
+  }, [isActive, isPaused, timer, distance, treinoHoje]);
 
   const lastDistRef = useRef(0);
   const timeAtLastMoveRef = useRef(0);
@@ -242,22 +199,8 @@ export function TrainingPage() {
   };
 
   const finishTraining = async () => {
-    // Calcular apenas a parte da CORRIDA, excluindo aquecimento e desaquecimento
     let distCorrida = distance;
     let tempoCorrida = timer;
-
-    if (hasPhases) {
-      if (fase === 'AQUECIMENTO') {
-        distCorrida = 0; // Só aqueceu e parou
-        tempoCorrida = 0;
-      } else if (fase === 'TREINO') {
-        distCorrida = distance - warmupDistance.current;
-        tempoCorrida = timer - 300; // Tira os 5 min de aquecimento
-      } else if (fase === 'DESAQUECIMENTO' || fase === 'FINALIZADO') {
-        distCorrida = cooldownDistance.current - warmupDistance.current;
-        tempoCorrida = treinoHoje?.tempo ? treinoHoje.tempo * 60 : 1800; // Apenas o tempo cravado do treino
-      }
-    }
 
     // Para evitar tempo/distancia negativos por bugs
     if (distCorrida < 0) distCorrida = 0;
@@ -333,22 +276,8 @@ export function TrainingPage() {
     }
   };
 
-  // Cálculos para exibição separada na tela por fase
   let displayDistance = distance;
   let displayTimer = timer;
-
-  if (hasPhases) {
-    if (fase === 'AQUECIMENTO') {
-      displayDistance = distance;
-      displayTimer = timer;
-    } else if (fase === 'TREINO') {
-      displayDistance = distance - warmupDistance.current;
-      displayTimer = timer - 300; // 5 min de aquecimento
-    } else if (fase === 'DESAQUECIMENTO' || fase === 'FINALIZADO') {
-      displayDistance = distance - cooldownDistance.current;
-      displayTimer = timer - 300 - (treinoHoje?.tempo ? treinoHoje.tempo * 60 : 1800);
-    }
-  }
 
   // Previne números negativos visuais por pequenos delays
   if (displayDistance < 0) displayDistance = 0;
@@ -380,20 +309,6 @@ export function TrainingPage() {
       </div>
 
       {error && <div className="absolute top-20 bg-red-500 text-white p-2 text-xs rounded">{error}</div>}
-
-      {/* Fase atual */}
-      {hasPhases && (
-        <div className="w-full flex justify-center mb-8">
-          <div className={`px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${
-            fase === 'AQUECIMENTO' ? 'bg-blue-500/20 text-blue-400' :
-            fase === 'TREINO' ? 'bg-[var(--color-primary)]/20 text-[var(--color-primary)]' :
-            fase === 'DESAQUECIMENTO' ? 'bg-purple-500/20 text-purple-400' :
-            'bg-gray-800 text-gray-400'
-          }`}>
-            {fase}
-          </div>
-        </div>
-      )}
 
       {/* Main Stats - Vertical Layout */}
       <div className="flex flex-col items-center justify-center w-full space-y-10 mb-16">
